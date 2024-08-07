@@ -1,23 +1,22 @@
 const { createProxyMiddleware } = require("http-proxy-middleware");
 
 module.exports = (req, res) => {
-  let target = "https://discord.com/";//your website url
-  //   if (
-  //     req.url.startsWith("/api") ||
-  //     req.url.startsWith("/auth") ||
-  //     req.url.startsWith("/banner") ||
-  //     req.url.startsWith("/CollegeTask")
-  //   ) {
-  //     target = "http://106.15.2.32:6969";
-  //   }
+  // Extract the path from the original request URL
+  const path = req.url;
+
+  // Define the target domain
+  const target = "https://discord.com";
 
   createProxyMiddleware({
     target,
     changeOrigin: true,
     pathRewrite: {
-      // rewrite request path `/backend`
-      //  /backend/user/login => http://google.com/user/login
-      //   "^/backend/": "/",
+      // Remove the leading "/" from the path
+      "^/": path,
+    },
+    router: function (req) {
+      // Dynamically rewrite the URL
+      return target + path;
     },
   })(req, res);
 };
